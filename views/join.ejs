@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+<%- include('basic-set')%>
+<link href="/public/join.css" rel="stylesheet">
+</head>
+<body>
+  <div id="join">
+    <div><h2 class="info_Container">Join</h2><br></div>
+    <form action="/join" method="POST" name="joinFrm" id="joinFrm">
+      <div id="joinFrm-container">
+
+        <div class="mb-3" id="name-container">
+          <label for="userName" class="form-label">Name (한글 2글자 이상)</label>
+          <input type="text" class="form-control" id="userName" name="userName">
+        </div>
+        <div class="mb-3" id="id-container">
+          <label for="userId" class="form-label">ID (아이디 숫자 1글자 이상 포함 / 영소문자로 시작하는 4~12글자)</label>
+          <input type="text" class="form-control" id="userId" name="userId">
+        </div>
+        <div class="mb-3" id="pw-container">
+          <label for="userPw" class="form-label">Password (비밀번호 6자리 이상)</label>
+          <input type="password" class="form-control" id="userPw" name="userPw">
+        </div>
+        <div class="mb-3" id="pwCheck-container">
+          <label for="userPwCheck" class="form-label">PasswordCheck (비밀번호 6자리 이상)</label>
+          <input type="password" class="form-control" id="userPwCheck" name="userPwCheck">
+        </div>
+        <div id="btn-container">
+          <button type="submit" class="btn btn-primary" id="joinSubmit">Submit</button>
+          <button type="button" class="btn btn-primary">Login</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+/* font-family: 'Jua', sans-serif;
+font-family: 'Noto Sans KR', sans-serif; */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+}
+a {
+  text-decoration: none;
+}
+a:link {
+  text-decoration: none;
+  color: black;
+}
