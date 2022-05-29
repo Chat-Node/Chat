@@ -19,12 +19,19 @@
   margin: 10px;
 }
 /* 상단 nav */
-#nav-container {
+#bar-container {
   border: 1px solid green;
-  float: left;
-  height: 10%;
+  height: 80px;
   width: 80%;
-
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
+}
+#chat-btn-container {
+  height: 100%;
+  border: 1px solid black;
+  display: table-cell;
+  padding: 19px;
 }
 
 /* Main */
@@ -35,4 +42,62 @@
   width: 80%;
   height: 90%;
   padding: 10px;
+}
+
+/* Model */
+.create-show {
+  display: block;
+}
+
+.search-show {
+  display: block;
+}
+
+.createChatRoom-modal-container {
+  width : 100%;
+  height : 100%;
+  position : relative;
+  background : rgba(0,0,0,0);
+  z-index : 5;
+  padding: 30px;
+  opacity: 0;
+  transition: all 1s;
+}
+
+.searchChatRoom-modal-container {
+  width : 100%;
+  height : 100%;
+  position : relative;
+  background : rgba(0,0,0,0);
+  z-index : 7;
+  padding: 30px;
+  opacity: 0;
+  transition: all 1s;
+}
+.createChatRoom-modal {
+  width : 90%;
+  color: white;
+  border-radius: 5px;
+  padding: 30px;
+  z-index: 6;
+  position : absolute;
+} 
+
+.searchChatRoom-modal {
+  width : 90%;
+  color: white;
+  border-radius: 5px;
+  padding: 30px;
+  z-index: 8;
+  position : absolute;
+} 
+
+.create-show-modal {
+  visibility: visible;
+  opacity: 1;
+}
+
+.search-show-modal {
+  visibility: visible;
+  opacity: 1;
 }
