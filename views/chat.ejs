@@ -11,6 +11,62 @@
 </head>
 <body>
   
+<!-- 상단 nav -->
+<div id="bar-container">
+  <div id="chat-btn-container">
+    <button type="button" class="btn btn-primary" id="createChatRoom">채팅방 생성</button>
+    <button type="button" class="btn btn-primary" id="searchChatRoom">채팅방 검색</button>
+  </div>
+</div>
+
+  <div class="createChatRoom-modal-container">
+    <div class="createChatRoom-modal bg-dark">
+      <h4>채팅방 생성</h4>
+      <form>
+        <div class="my-3">
+          <input type="text" class="form-control" id="chatRoomName" value="test1">
+        </div>
+          <button type="submit" class="btn btn-primary" id="create">생성</button>
+          <button type="button" class="btn btn-danger" id="create-close">닫기</button>
+      </form> 
+    </div>
+  </div> 
+  
+  <div class="searchChatRoom-modal-container">
+    <div class="searchChatRoom-modal bg-dark">
+      <h4>채팅방 검색</h4>
+      <form>
+        <div class="my-3">
+          <input type="text" class="form-control" id="chatRoomNameSearch" value="test2">
+        </div>
+        <div id="chatRoomList">
+          chatRoomList
+        </div>
+        <br>
+          <button type="submit" class="btn btn-primary" id="conn">접속</button>
+          <button type="button" class="btn btn-danger" id="search-close">닫기</button>
+      </form> 
+    </div>
+  </div> 
+
+  <script>
+    $('#createChatRoom').on('click', function() {
+      $('.createChatRoom-modal-container').addClass('create-show-modal');
+    });
+  
+    $('#create-close').on('click', function() {
+      $('.createChatRoom-modal-container').removeClass('create-show-modal');
+    });
+
+    $('#searchChatRoom').on('click', function() {
+      $('.searchChatRoom-modal-container').addClass('search-show-modal');
+    });
+  
+    $('#search-close').on('click', function() {
+      $('.searchChatRoom-modal-container').removeClass('search-show-modal');
+    });
+  </script>
+
 <div id="container">
   <!-- 우측 ChatRoom -->
   <div id="ChatRoom-container">
@@ -23,65 +79,12 @@
     <div class="ChatRoom"></div>
   </div>
 
-  <!-- 상단 nav -->
-  <div id="bar-container">
-      <div id="chat-btn-container">
-        <button type="button" class="btn btn-primary" id="createChatRoom">채팅방 생성</button>
-        <button type="button" class="btn btn-primary" id="searchChatRoom">채팅방 검색</button>
-      </div>
-  </div>
+  
 
   <!-- Main -->
   <div id="Main">
     dsadsa
     <br>
-
-    <div class="createChatRoom-modal-container">
-      <div class="createChatRoom-modal bg-dark">
-        <h4>채팅방 생성</h4>
-        <form>
-          <div class="my-3">
-            <input type="text" class="form-control" id="chatRoomName" value="test1">
-          </div>
-            <button type="submit" class="btn btn-primary" id="create">생성</button>
-            <button type="button" class="btn btn-danger" id="close">닫기</button>
-        </form> 
-      </div>
-    </div> 
-    
-    <div class="searchChatRoom-modal-container">
-      <div class="searchChatRoom-modal bg-dark">
-        <h4>채팅방 검색</h4>
-        <form>
-          <div class="my-3">
-            <input type="text" class="form-control" id="chatRoomNameSearch" value="test2">
-          </div>
-            <button type="submit" class="btn btn-primary" id="conn">접속</button>
-            <button type="button" class="btn btn-danger" id="close">닫기</button>
-        </form> 
-      </div>
-    </div> 
-    
-    <script>
-      $('#createChatRoom').on('click', function() {
-        $('.createChatRoom-modal-container').addClass('create-show-modal');
-        console.log("test1")
-      });
-    
-      $('#close').on('click', function() {
-        $('.createChatRoom-modal-container').removeClass('create-show-modal');
-      });
-
-      $('#searchChatRoom').on('click', function() {
-        $('.searchChatRoom-modal-container').addClass('search-show-modal');
-        console.log("test2")
-      });
-    
-      $('#close').on('click', function() {
-        $('.searchChatRoom-modal-container').removeClass('search-show-modal');
-      });
-    </script>
-
   </div>
 </div>
 
