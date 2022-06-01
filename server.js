@@ -132,9 +132,13 @@ app.get('/chat', connect_login, function(req, res){
   db.collection('chatroom').find({member: req.user._id}).toArray().then((result)=>{ 
 
     // 채팅방 목록을 chat.ejs에 넘겨줌
-    res.render('chat.ejs', { data: result, my_id: req.user._id });
-    
+    res.render('chat.ejs', { data: result, my_id: req.user._id, chatrooms : result });
+
+
   });
+
+  
+
 });
 
 

@@ -34,12 +34,16 @@
   
   <div class="searchChatRoom-modal-container">
     <div class="searchChatRoom-modal bg-dark">
-      <h4>채팅방 검색</h4>
+      <h4>채팅방 입장</h4>
       <div class="my-3">
         <input type="text" class="form-control" id="chatRoomNameSearch" value="test2">
       </div>
         <div id="chatRoomList">
-
+          <% for(var i = 0; i < chatrooms.length; i++) {%>
+            <ul>
+              <a href="#"><li><%= chatrooms[i].title %></li></a>
+            </ul>
+          <% } %>
         </div>
       <br>
       <button type="submit" class="btn btn-primary" id="conn">접속</button>
@@ -58,32 +62,8 @@
 
     $('#searchChatRoom').on('click', function() {
       $('.searchChatRoom-modal-container').addClass('search-show-modal');
-
-
     });
 
-    $('#chatRoomNameSearch').on('keypress', function(e) {
-      console.log(e.target.value)
-
-      const inputChatRoomList = $('#chatRoomList');
-
-      $.ajax({
-        method : 'chatRoomList',
-        url : '/chatRoomList',
-        type : 'POST',
-        data : { "chatrooms" : title }
-      }).done(function(result){
-        document.createElement('<ul>');
-          for(let i = 0; i < chatrooms.length; i++) {
-            inputChatRoomList.innerHTML = chatrooms[i].title;
-          }
-        document.createElement('</ul>');
-      }).fail(function(xhr,textStatus,errThrown){
-        console.log(xhr,textStatus,errThrown);
-          alert('조회 실패!');
-        });
-    })
-  
     $('#search-close').on('click', function() {
       $('.searchChatRoom-modal-container').removeClass('search-show-modal');
     });
@@ -92,7 +72,10 @@
 
     })
     
-   
+    $('#chatRoomNameSearch').on('keypress', function(e) {
+      console.log(e.target.value)
+
+    })
 
   </script>
 
