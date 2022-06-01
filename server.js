@@ -151,3 +151,11 @@ app.post('/chatroom',function(req, res){
         res.send('저장완료');
     });
 });
+
+// 채팅방 검색
+app.get('/chatRoomList', function(req, res) {
+    db.collection('chatroom').find().toArray(function(err, result){
+      console.log(result);
+      res.render('chat.ejs', { chatrooms : result });
+  });
+});

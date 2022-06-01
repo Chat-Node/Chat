@@ -39,9 +39,18 @@
         <div class="my-3">
           <input type="text" class="form-control" id="chatRoomNameSearch" value="test2">
         </div>
-        <div id="chatRoomList">
-          chatRoomList
-        </div>
+        <form action="/chatRoomList" method="GET">
+          <div id="chatRoomList">
+            <ul>
+              <% for(let i = 0; i < chatrooms.length; i++) {%>
+                <li>
+                  <span><%= chatrooms[i].title %></span>
+  
+                </li>
+              <% } %>
+            </ul>
+          </div>
+        </form>
         <br>
           <button type="submit" class="btn btn-primary" id="conn">접속</button>
           <button type="button" class="btn btn-danger" id="search-close">닫기</button>
