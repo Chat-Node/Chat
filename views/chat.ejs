@@ -68,15 +68,22 @@
   </script>
 
 <div id="container">
-  <!-- 우측 ChatRoom -->
+  
   <div id="ChatRoom-container">
-    <div class="ChatRoom">ChatRoom</div>
-    <div class="ChatRoom"></div>
-    <div class="ChatRoom"></div>
-    <div class="ChatRoom"></div>
-    <div class="ChatRoom"></div>
-    <div class="ChatRoom"></div>
-    <div class="ChatRoom"></div>
+    <div class="ChatRoom">
+      <ul class="list-group chat-list" style="overflow: auto;">
+        <% for(let i=0; i < data.length; i++) {%>
+          <li class="list-group-item" data-id="<%=data[i]._id%>">
+            <h6>
+              <%= data[i].title%>
+            </h6>
+            <h6 style="word-wrap: break-word; " class="text-small">
+              <%= data[i].memberName%>
+            </h6>
+          </li>
+          <% } %>
+      </ul>
+    </div>
   </div>
 
   

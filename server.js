@@ -49,42 +49,20 @@ app.use(session({secret : '비밀코드', resave : true, saveUninitialized: fals
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 회원가입
-app.get('/join', function(req, res){
-  res.render('join.ejs', {state : req.params.state})
-});
-
-// 로그인 구현
-app.get('/login', function(req, res){
-   res.render('login.ejs', {state : req.params.state})
-});
-app.get('/loginfail', function(req, res){
-    res.render('loginfail.ejs', {state : req.params.state})
- }); 
-
-app.post('/login', passport.authenticate('local', {failureRedirect : '/fail'}),
- function(req, res){
-    // passport : 로그인 기능 쉽게 구현 도와줌
-    // local만 쓸경우 : local 방식으로 회원 인증
-    // {failureRedirect : '/fail'} : 로그인 실패시 /fail 경로로 이동
-
-    res.redirect('/chat');
-});
-
 // 로그인 검사
 passport.use(new LocalStrategy({
     usernameField: 'userId',
     passwordField: 'userPw',
     session: true,
     passReqToCallback: false,
-  }, function (입력한아이디, 입력한비번, done) {
+  }, function (input_id, input_pw, done) {
     
-    db.collection('login').findOne({ id: 입력한아이디 }, function (err, result) {
+  db.collection('login').findOne({ id: input_id }, function (err, result) {
       if (err) return done(err)
 
       
       if (!result) return done(null, false, { message: '존재하지않는 아이디' })
-      if (입력한비번 == result.pw) {
+      if (input_pw == result.pw) {
         return done(null, result)
       } else {
         return done(null, false, { message: '비번틀렸어요' })
@@ -101,8 +79,44 @@ passport.serializeUser(function(user, done){
 
 
 passport.deserializeUser(function(id, done){
-    done(null, {})
+  db.collection('login').findOne({ id: id }, function (err, result) {
+    done(null, result);
+  });
 })
+
+// 로그인 했는지 확인하는 미들웨어
+function connect_login(req, res, next) {
+  if (req.user) {
+    console.log("connect_login ", req.user._id);
+    next()
+  } else {
+    //res.send('로그인 안함');
+    res.redirect('/login');
+  }
+}
+
+
+// 회원가입
+app.get('/join', function (req, res) {
+  res.render('join.ejs', { state: req.params.state })
+});
+
+// 로그인 구현
+app.get('/login', function (req, res) {
+  res.render('login.ejs', { state: req.params.state })
+});
+app.get('/loginfail', function (req, res) {
+  res.render('loginfail.ejs', { state: req.params.state })
+});
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/fail' }),
+  function (req, res) {
+    // passport : 로그인 기능 쉽게 구현 도와줌
+    // local만 쓸경우 : local 방식으로 회원 인증
+    // {failureRedirect : '/fail'} : 로그인 실패시 /fail 경로로 이동
+
+    res.redirect('/chat');
+  });
 
 
 // 로그인 실패시
@@ -110,7 +124,30 @@ app.get('/fail', function(req, res){
     res.redirect('/loginfail');
 });
 
+
 // 채팅 페이지
-app.get('/chat', function(req, res){
-  res.render('chat.ejs');
+app.get('/chat', connect_login, function(req, res){
+
+  // 현재 로그인한유저의 _id를 가지고 chatroom컬렉션의 채팅방 목록을 가져옴
+  db.collection('chatroom').find({member: req.user._id}).toArray().then((result)=>{ 
+
+    // 채팅방 목록을 chat.ejs에 넘겨줌
+    res.render('chat.ejs', { data: result, my_id: req.user._id });
+    
+  });
+});
+
+
+const {ObjectId} = require('mongodb');
+app.post('/chatroom',function(req, res){
+
+    var data = {
+        title : '무슨무슨채팅방',
+        member : [ObjectId(req.body.당한사람id), req.user._id],
+        date : new Date()
+    }
+
+    db.collection('chatroom').insertOne(data).then(function(result){
+        res.send('저장완료');
+    });
 });
