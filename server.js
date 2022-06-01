@@ -153,7 +153,7 @@ app.post('/chatroom',function(req, res){
 });
 
 // 채팅방 검색
-app.get('/chatRoomList', function(req, res) {
+app.post('/chatRoomList', function(req, res) {
     db.collection('chatroom').find().toArray(function(err, result){
       console.log(result);
       res.render('chat.ejs', { chatrooms : result });
