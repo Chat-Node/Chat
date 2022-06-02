@@ -100,7 +100,22 @@ function connect_login(req, res, next) {
 
 // 회원가입
 app.get('/join', function (req, res) {
-  res.render('join.ejs', { state: req.params.state })
+  res.render('join.ejs', { state: req.params.state });
+});
+app.post('/join', function (req, res) {
+
+  var create_member_data = {
+    id: req.body.userId,
+    pw: req.body.userPw,
+    nick: req.body.userNickName
+  }
+
+  console.log(create_member_data);
+  db.collection('login').insertOne(create_member_data, function (err, result){
+    console.log(result);
+    
+    res.redirect('/login');
+  })
 });
 
 // 로그인 구현
@@ -208,11 +223,19 @@ app.get('/message/:parentid', connect_login, function (req, res) {
 });
 
 // 채팅방 검색
-app.post('/chatRoomList', function (req, res) {
+app.post('/chat', function (req, res) {
   db.collection('chatroom').find().toArray(function (err, result) {
     console.log(result);
     res.render('chat.ejs', { chatrooms: result });
   });
+  // var enter_chatroom = {
+  //   title: req.body.chatRoomNameSearch
+  // }
+  // db.collection('chatroom').insertOne(enter_chatroom, function (err, result) {
+  //   console.log(result);
+  //   //res.send('채팅방 생성 완료');
+  //   res.redirect('/chat');
+  // });
 });
 
 // 채팅방 생성
@@ -234,5 +257,4 @@ app.post('/create_room', connect_login, function (req, res) {
       res.redirect('/chat');
     });
   });
-
 });
