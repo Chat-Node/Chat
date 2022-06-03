@@ -31,7 +31,23 @@
         </div>
       </div>
     </form>
+    <% if(state.error != null) { %>
+    <div class="alert alert-danger" role="alert" style="visibility: hidden;">
+      <%= state.error %>
+    </div>
+    <% } %>
   </div>
-
+  
+  <script>
+  var timer = 4;
+  var loginfail = setInterval(function() {
+    timer -= 1;
+    if(timer > 0){ 
+      $('.alert').css('visibility', 'visible');
+    } else if(timer < 0) {
+      $('.alert').css('visibility', 'hidden');
+    }
+  }, 1000)
+  </script>
 </body>
 </html>

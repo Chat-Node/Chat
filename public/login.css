@@ -2,6 +2,7 @@
   width: 50%;
   height: 400px;
   margin: 0 auto;
+  /* border: 1px solid black; */
 }
 .info-Container {
   margin-top: 20px;
@@ -31,4 +32,11 @@
   font-family: 'Jua', sans-serif;
   font-size: 20px;
   width:20%;
+}
+
+.alert {
+  margin-top:20px;
+  width: 100%;
+  text-align: center;
+  align-items: center;
 }

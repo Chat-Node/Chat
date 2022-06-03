@@ -51,6 +51,9 @@ app.use(session({ secret: '비밀코드', resave: true, saveUninitialized: false
 app.use(passport.initialize());
 app.use(passport.session());
 
+const flash = require('connect-flash');
+app.use(flash());
+
 // 로그인 검사
 passport.use(new LocalStrategy({
   usernameField: 'userId',
@@ -63,11 +66,11 @@ passport.use(new LocalStrategy({
     if (err) return done(err)
 
 
-    if (!result) return done(null, false, { message: '존재하지않는 아이디' })
+    if (!result) return done(null, false, { message: '존재하지 않는 아이디 입니다 !' })
     if (input_pw == result.pw) {
       return done(null, result)
     } else {
-      return done(null, false, { message: '비번틀렸어요' })
+      return done(null, false, { message: '잘못된 비밀번호 입니다 !' })
     }
   })
 }));
@@ -97,7 +100,6 @@ function connect_login(req, res, next) {
   }
 }
 
-
 // 회원가입
 app.get('/join', function (req, res) {
   res.render('join.ejs', { state: req.params.state });
@@ -120,26 +122,27 @@ app.post('/join', function (req, res) {
 
 // 로그인 구현
 app.get('/login', function (req, res) {
-  res.render('login.ejs', { state: req.params.state })
+  var test = req.flash();
+  console.log(req.flash());
+  res.render('login.ejs', { state: test })
 });
-app.get('/loginfail', function (req, res) {
-  res.render('loginfail.ejs', { state: req.params.state })
-});
+// app.get('/loginfail', function (req, res) {
+//   res.render('loginfail.ejs', { state: req.params.state })
+// });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/fail' }),
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
   function (req, res) {
     // passport : 로그인 기능 쉽게 구현 도와줌
     // local만 쓸경우 : local 방식으로 회원 인증
     // {failureRedirect : '/fail'} : 로그인 실패시 /fail 경로로 이동
-
-    res.redirect('/chat');
+      res.redirect('/chat');
   });
 
 
 // 로그인 실패시
-app.get('/fail', function (req, res) {
-  res.redirect('/loginfail');
-});
+// app.get('/fail', function (req, res) {
+//   res.redirect('/login');
+// });
 
 // 채팅 페이지
 app.get('/chat', connect_login, function (req, res) {
