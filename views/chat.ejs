@@ -95,7 +95,8 @@
             </li>
             <% }else{ %>
               <% for(let i=0; i < data.length; i++) {%>
-                <li class="list-group-item" data-id="<%=data[i]._id%>">
+                <li style="word-break: option; word-wrap: break-word;" class="list-group-item"
+                  data-id="<%=data[i]._id%>">
                   <h6>
                     <%= data[i].title %>
                   </h6>
@@ -137,19 +138,25 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script> -->
 
   <script>
-  function enterkey() {
-    if (window.event.keyCode == 13) {
-      $('#send').click();
-        console.log("test")
+    function enterkey() {
+      if (window.event.keyCode == 13) {
+        var tt = $('#chat-input').val().trim();
+        if (tt.trim() == '') {
+          alert('빈 값입니다!');
+        } else {
+          $('#send').click();
+        }
+
       }
-  }
+    }
     var click_chatroom_id;
     var eventSource;
 
     $('.list-group-item').click(function () {
       click_chatroom_id = this.dataset.id; // 현재 클릭이벤트 동작하는 코드
 
-      $('.list-group-item').css("background-color", "yellow");
+      $('.list-group-item').removeClass("active");
+      $(this).addClass("active");
 
       $('.col-9.p-0').css("display", "block");
       // 채팅 비우기
@@ -176,7 +183,7 @@
           if (i.userid == "<%= my_id%>") {
             $('.chat-content').append('<div style="margin-bottom: 10px;"><h6 style="text-align:right; margin-bottom: 4px;">' + i.nick + '</h6><li style="margin-top: 4px;"><span style="background-color: yellow; float: right;"  class="chat-box">' + i.content + '</span></li></div>');
           } else {
-            $('.chat-content').append('<div><h6 style="margin-bottom: 4px;">' + i.nick + '</h6><li style="margin-top: 4px;"><span class="chat-box">' + i.content + '</span></li><div>');
+            $('.chat-content').append('<div style="margin-bottom: 10px;"><h6 style="margin-bottom: 4px;">' + i.nick + '</h6><li style="margin-top: 4px;"><span class="chat-box">' + i.content + '</span></li><div>');
           }
 
 
@@ -188,20 +195,25 @@
     });
 
     $('#send').click(function () {
-      var chat_data = $('#chat-input').val();
-      var send_data = {
-        parent: click_chatroom_id,
-        content: chat_data,
+      var tt = $('#chat-input').val().trim();
+      if (tt == '') {
+        alert('빈 값입니다.');
+      } else {
+        var chat_data = $('#chat-input').val();
+        var send_data = {
+          parent: click_chatroom_id,
+          content: chat_data,
+        }
+
+        $.post('/message', send_data).then(() => {
+          console.log('전송 성공');
+          $('#chat-input').val('');
+
+          //$('.chat-content').scrollTop($('.chat-content')[0].scrollHeight);
+          // 메시지 보내면 스크롤 내리기
+          $('.chat-content').stop().animate({ scrollTop: $('.chat-content')[0].scrollHeight });
+        });
       }
-
-      $.post('/message', send_data).then(() => {
-        console.log('전송 성공');
-        $('#chat-input').val('');
-
-        //$('.chat-content').scrollTop($('.chat-content')[0].scrollHeight);
-        // 메시지 보내면 스크롤 내리기
-        $('.chat-content').stop().animate({ scrollTop: $('.chat-content')[0].scrollHeight });
-      });
 
     });
 
