@@ -1,10 +1,7 @@
-
 const express = require('express');
 const app = express();
 const { ObjectId } = require('mongodb');
 const flash = require('connect-flash');
-
-
 
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -13,8 +10,6 @@ const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
 app.use('/public', express.static('public'));
-
-
 
 // 몽고디비 라이브러리 설치하기
 // npm install mongodb
@@ -33,13 +28,8 @@ MongoClient.connect('mongodb+srv://chat-mongo:ymiru03240205ryeol@cluster0.psnih.
   });
 });
 
-
-
 // npm install -g nodemon ==> 서버를 자동으로 재실행 해주는 라이브러리
 //  (에러가 생길 경우 맨앞에 sudo를 추가)
-
-
-
 
 // npm install passport passport-local express-session
 // 라이브러리 첨부
@@ -81,13 +71,11 @@ passport.use(new LocalStrategy({
   })
 }));
 
-
 passport.serializeUser(function (user, done) {
   // user 매개변수에는 result가 들어간다.
   console.log(user.message);
   done(null, user.id) // id를 이용해 세션에 저장 후 정보를 쿠키로 전송
 });
-
 
 passport.deserializeUser(function (id, done) {
   db.collection('login').findOne({ id: id }, function (err, result) {
@@ -105,7 +93,6 @@ function connect_login(req, res, next) {
     res.redirect('/login');
   }
 }
-
 
 // 회원가입
 app.get('/join', function (req, res) {
@@ -143,13 +130,6 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login', f
     res.redirect('/chat');
   });
 
-
-// 로그인 실패시
-// app.get('/fail', function (req, res) {
-//   console.log(req.flash());
-//   res.redirect('/loginfail');
-// });
-
 // 채팅 페이지
 app.get('/chat', connect_login, function (req, res) {
 
@@ -157,18 +137,10 @@ app.get('/chat', connect_login, function (req, res) {
   db.collection('chatroom').find({ member: req.user._id }).toArray().then((result) => {
 
     db.collection('chatroom').find({ member: { $ne: req.user._id } }).toArray((err, result_chatrooms) => {
-
       res.render('chat.ejs', { data: result, my_id: req.user._id, chatrooms: result_chatrooms });
-
     });
-
-    // 채팅방 목록을 chat.ejs에 넘겨줌
-
-
   });
 });
-
-
 
 // 메시지 저장
 app.post('/message', connect_login, function (req, res) {
@@ -189,7 +161,6 @@ app.post('/message', connect_login, function (req, res) {
     });
   });
 });
-
 
 app.get('/message/:parentid', connect_login, function (req, res) {
 
@@ -231,8 +202,6 @@ app.get('/message/:parentid', connect_login, function (req, res) {
       }
     }
   ];
-
-  //const changeStream = db.collection('message').watch(pipeline);
   const changeStream = db.collection('message').watch(pipeline); // .watch() ==> 실시간 감지
   changeStream.on('change', (result) => { // 해당 컬렉션에 변동생기면 여기 코드 실행    
 
@@ -240,9 +209,7 @@ app.get('/message/:parentid', connect_login, function (req, res) {
     res.write('data: ' + JSON.stringify([result.fullDocument]) + '\n\n');
   });
 
-
 });
-
 
 // 채팅방 생성
 app.post('/create_room', connect_login, function (req, res) {
@@ -259,20 +226,13 @@ app.post('/create_room', connect_login, function (req, res) {
     }
     db.collection('chatroom').insertOne(create_chatroom_data, function (err, result) {
       console.log(result);
-      //res.send('채팅방 생성 완료');
       res.redirect('/chat');
     });
   });
-
 });
-
 
 app.get('/search', (req, res) => {
   console.log(req.query.value);
-  // db.collection('post').find( { $text: {$search: req.query.value } } ).toArray((err, result) => {
-  //         console.log(result);
-  //         res.render('search.ejs', {posts : result});
-  //     });
 
   var search_condition = [ // 검색조건
     {
@@ -284,19 +244,8 @@ app.get('/search', (req, res) => {
         }
       }
     },
-    /*{
-        $sort : { // _id 정렬
-            _id : 1
-        },
-        //$limit : 10 // 10개 제한
-    }*/
-    /*{
-        $project : {제목: 1, _id: 0, score: {$meta : "searchScore"} } // 검색 결과에 필터주기
-    }*/
   ]
-
 });
-
 
 app.post('/chatrooms_in', function (req, res) {
 
@@ -310,6 +259,5 @@ app.post('/chatrooms_in', function (req, res) {
     db.collection('chatroom').updateOne({ _id: ObjectId(req.body.chatrooms_data) }, { $push: { member: Object(req.user._id), memberName: result.nick } }, function (err, result) {
       res.redirect('/chat');
     });
-
   });
 })
