@@ -22,17 +22,18 @@
 
 /* 상단 nav */
 #bar-container {
-  border: 1px solid green;
+  border-bottom: 1px solid black;
   height: 80px;
   width: 100%;
   vertical-align: middle;
   position: relative;
   display: inline-block;
+  display: flex;
+  justify-content: center;
 }
 
 #chat-btn-container {
   height: 100%;
-  border: 1px solid black;
   display: table-cell;
   padding: 19px;
 }
