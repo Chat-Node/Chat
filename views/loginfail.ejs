@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
 
-  <!-- 기본 셋팅 상속 -->
-  <%- include('basic-set')%>
-    <link href="/public/login.css" rel="stylesheet">
-
+<!-- 기본 셋팅 상속 -->
+<%- include('basic-set')%>
+<link href="/public/login.css" rel="stylesheet">
 </head>
-
 <body>
-  <div id="login">
-    <div>
-      <h2 class="info-Container">Login</h2><br>
-    </div>
 
+  <div id="login">
+    <div><h2 class="info-Container">Login</h2><br></div>
     <form action="/login" method="POST" name="loginFrm">
       <div id="loginFrm-container">
         <div class="mb-3" id="id-container">
@@ -31,28 +26,16 @@
         </div>
         <div id="btn-container">
           <button type="submit" class="btn btn-primary" id="loginSubmit">로그인</button>
-          <button type="button" class="btn btn-primary" onclick="location.href='join'">회원가입</button>
+          <button type="button" class="btn btn-primary">회원가입</button>
         </div>
       </div>
     </form>
-    <% if(state.error !=null) { %>
-      <div style="margin-top: 15px;" class="alert alert-danger" role="alert">
-        <%= state.error %>
-      </div>
-      <% } %>
+    <br>
+    <div class="alert alert-danger" role="alert">
+      아이디 또는 비밀번호를 잘못입력했습니다.다시 확인해주세요.
+    </div>
   </div>
-
-  <!-- <script>
-    var timer = 4;
-    var loginfail = setInterval(function () {
-      timer -= 1;
-      if (timer > 0) {
-        $('.alert').css('visibility', 'visible');
-      } else if (timer < 0) {
-        $('.alert').css('visibility', 'hidden');
-      }
-    }, 1000)
-  </script> -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 </body>
-
 </html>

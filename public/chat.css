@@ -11,11 +11,11 @@
   float: left;
   width: 20%;
   height: 100%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .ChatRoom {
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   height: 100px;
   margin: 10px;
 }
@@ -107,21 +107,11 @@
   color: black;
 }
 
-.chatrooms_title {
-  margin: 5px;
-}
-
-ol,
-ul,
-li {
+/* .chatrooms_title {
   list-style: none;
   margin: 0px;
   padding: 0px;
-}
-
-
-
-
+} */
 
 .list-group.chat-list {
   -webkit-touch-callout: none;
@@ -130,6 +120,9 @@ li {
   -ms-user-select: none;
   -webkit-user-select: none;
 }
+
+
+
 
 .chat-content {
   height: 450px;
@@ -162,4 +155,14 @@ li {
 .list-group-item:hover {
   cursor: default;
   background-color: rgb(230, 230, 230);
+}
+
+.chatrooms_li:hover {
+  background-color: rgb(139, 220, 174);
+
+  -webkit-touch-callout: none;
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
 }

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <title>chat</title>
 
   <%- include('basic-set')%>
@@ -12,7 +13,6 @@
 </head>
 
 <body>
-
   <!-- 상단 nav -->
   <div id="bar-container">
     <div id="chat-btn-container">
@@ -24,7 +24,7 @@
   <div class="createChatRoom-modal-container">
     <div class="createChatRoom-modal bg-dark">
       <h4>채팅방 생성</h4>
-      <form action="/create_room" method="POST">
+      <form action="/create_room" method="POST" onsubmit="return chat_check()">
         <div class="my-3">
           <input type="text" class="form-control" name="chatRoomName">
         </div>
@@ -37,27 +37,18 @@
   <div class="searchChatRoom-modal-container">
     <div class="searchChatRoom-modal bg-dark">
       <h4>채팅방 입장</h4>
-      <form action="/chatRoomList", method="POST">
-
-      
-        <div class="my-3">
-          <input type="text" class="form-control" id="chatRoomNameSearch" readonly />
-        </div>
-        <div id="chatRoomList">
-          <% for(var i=0; i < chatrooms.length; i++) {%>
-            <ul>
-              <a href="#">
-                <li class="chatrooms_title" data-id="<%=chatrooms[i].title%>">
-                  <%= chatrooms[i].title %>
-                </li>
-              </a>
-            </ul>
+      <div id="chatRoomList">
+        <ul style="list-style: none; padding-left: 0px;" id="ul_chatRoomList">
+          <% for(let i=0; i<chatrooms.length; i++ ) {%>
+            <li class="chatrooms_li" style="margin-bottom: 3px;" data-id="<%= chatrooms[i]._id%>">
+              <%= chatrooms[i].title%>
+            </li>
             <% } %>
-        </div>
-        <br>
-        <button type="submit" class="btn btn-primary" id="conn">접속</button>
-        <button type="button" class="btn btn-danger" id="search-close">닫기</button>
-      </form>
+        </ul>
+      </div>
+      <br>
+      <!-- <button type="submit" class="btn btn-primary" id="conn">접속</button> -->
+      <button type="button" class="btn btn-danger" id="search-close">닫기</button>
     </div>
   </div>
 
@@ -68,6 +59,7 @@
 
     $('#create-close').on('click', function () {
       $('.createChatRoom-modal-container').removeClass('create-show-modal');
+      $('.form-control').val('');
     });
 
     $('#searchChatRoom').on('click', function () {
@@ -94,16 +86,25 @@
 
       <div class="col-3">
         <ul class="list-group chat-list" style="overflow: auto;">
-          <% for(let i=0; i < data.length; i++) {%>
-            <li class="list-group-item" data-id="<%=data[i]._id%>">
-              <h6>
-                <%= data[i].title%>
-              </h6>
-              <h6 style="word-wrap: break-word; " class="text-small">
-                <%= data[i].memberName%>
-              </h6>
+          <li>
+            <h6>채팅방 리스트</h6>
+          </li>
+          <% if (data.length==0) {%>
+            <li class="list-group-item">
+              <h6> 채팅방 없음 </h6>
             </li>
-            <% } %>
+            <% }else{ %>
+              <% for(let i=0; i < data.length; i++) {%>
+                <li class="list-group-item" data-id="<%=data[i]._id%>">
+                  <h6>
+                    <%= data[i].title %>
+                  </h6>
+                  <h6 style="word-wrap: break-word; " class="text-small">
+                    <%= data[i].memberName%>
+                  </h6>
+                </li>
+                <% } %>
+                  <% } %>
         </ul>
       </div>
 
@@ -123,7 +124,6 @@
 
   </div>
 
-
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
     crossorigin="anonymous"></script>
@@ -142,6 +142,8 @@
 
     $('.list-group-item').click(function () {
       click_chatroom_id = this.dataset.id; // 현재 클릭이벤트 동작하는 코드
+
+      $('.list-group-item').css("background-color", "yellow");
 
       $('.col-9.p-0').css("display", "block");
       // 채팅 비우기
@@ -166,9 +168,9 @@
           //if(i.userid )
 
           if (i.userid == "<%= my_id%>") {
-            $('.chat-content').append('<li><span style="background-color: yellow; float: right;"  class="chat-box">' + i.content + '</span></li>');
+            $('.chat-content').append('<div style="margin-bottom: 10px;"><h6 style="text-align:right; margin-bottom: 4px;">' + i.nick + '</h6><li style="margin-top: 4px;"><span style="background-color: yellow; float: right;"  class="chat-box">' + i.content + '</span></li></div>');
           } else {
-            $('.chat-content').append('<li><span class="chat-box">' + i.content + '</span></li>');
+            $('.chat-content').append('<div><h6 style="margin-bottom: 4px;">' + i.nick + '</h6><li style="margin-top: 4px;"><span class="chat-box">' + i.content + '</span></li><div>');
           }
 
 
@@ -193,12 +195,48 @@
         //$('.chat-content').scrollTop($('.chat-content')[0].scrollHeight);
         // 메시지 보내면 스크롤 내리기
         $('.chat-content').stop().animate({ scrollTop: $('.chat-content')[0].scrollHeight });
-      })
+      });
 
     });
+
+
+    $('.chatrooms_li').click(function () {
+      click_chatroom_id = this.dataset.id;
+      //alert(click_chatroom_id);
+
+      var chatrooms_data = {
+        chatrooms_data: click_chatroom_id, // 현재 클릭한 채팅룸의 _id(고유 _id)
+      }
+      $.post('/chatrooms_in', chatrooms_data).then(() => {
+        console.log("채팅룸 아이디 전송 성공!");
+        location.reload();
+        $('.searchChatRoom-modal-container').hide();
+
+      });
+    });
+
+    $('#searchChatRoom').click(function () {
+      $('.searchChatRoom-modal-container').show();
+    });
+
+
+    function chat_check() {
+
+      var chat_name = $('.form-control').val().trim();
+
+      if (chat_name == '') {
+        alert("제목을 입력해주세요");
+        $('.form-control').val('');
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+
+
+
   </script>
-
-
 
 </body>
 

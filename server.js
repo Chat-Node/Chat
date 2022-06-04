@@ -2,6 +2,8 @@
 const express = require('express');
 const app = express();
 const { ObjectId } = require('mongodb');
+const flash = require('connect-flash');
+
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -11,6 +13,8 @@ const methodOverride = require('method-override')
 app.use(methodOverride('_method'))
 
 app.use('/public', express.static('public'));
+
+
 
 // 몽고디비 라이브러리 설치하기
 // npm install mongodb
@@ -51,7 +55,8 @@ app.use(session({ secret: '비밀코드', resave: true, saveUninitialized: false
 app.use(passport.initialize());
 app.use(passport.session());
 
-const flash = require('connect-flash');
+// flash message
+app.use(session({ secret: '비밀코드' }));
 app.use(flash());
 
 // 로그인 검사
@@ -71,6 +76,7 @@ passport.use(new LocalStrategy({
       return done(null, result)
     } else {
       return done(null, false, { message: '잘못된 비밀번호 입니다 !' })
+
     }
   })
 }));
@@ -78,7 +84,7 @@ passport.use(new LocalStrategy({
 
 passport.serializeUser(function (user, done) {
   // user 매개변수에는 result가 들어간다.
-
+  console.log(user.message);
   done(null, user.id) // id를 이용해 세션에 저장 후 정보를 쿠키로 전송
 });
 
@@ -100,6 +106,7 @@ function connect_login(req, res, next) {
   }
 }
 
+
 // 회원가입
 app.get('/join', function (req, res) {
   res.render('join.ejs', { state: req.params.state });
@@ -113,9 +120,9 @@ app.post('/join', function (req, res) {
   }
 
   console.log(create_member_data);
-  db.collection('login').insertOne(create_member_data, function (err, result){
+  db.collection('login').insertOne(create_member_data, function (err, result) {
     console.log(result);
-    
+
     res.redirect('/login');
   })
 });
@@ -123,25 +130,24 @@ app.post('/join', function (req, res) {
 // 로그인 구현
 app.get('/login', function (req, res) {
   var test = req.flash();
-  console.log(req.flash());
   res.render('login.ejs', { state: test })
+
 });
-// app.get('/loginfail', function (req, res) {
-//   res.render('loginfail.ejs', { state: req.params.state })
-// });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
   function (req, res) {
     // passport : 로그인 기능 쉽게 구현 도와줌
     // local만 쓸경우 : local 방식으로 회원 인증
     // {failureRedirect : '/fail'} : 로그인 실패시 /fail 경로로 이동
-      res.redirect('/chat');
+
+    res.redirect('/chat');
   });
 
 
 // 로그인 실패시
 // app.get('/fail', function (req, res) {
-//   res.redirect('/login');
+//   console.log(req.flash());
+//   res.redirect('/loginfail');
 // });
 
 // 채팅 페이지
@@ -150,28 +156,40 @@ app.get('/chat', connect_login, function (req, res) {
   // 현재 로그인한유저의 _id를 가지고 chatroom컬렉션의 채팅방 목록을 가져옴
   db.collection('chatroom').find({ member: req.user._id }).toArray().then((result) => {
 
+    db.collection('chatroom').find({ member: { $ne: req.user._id } }).toArray((err, result_chatrooms) => {
+
+      res.render('chat.ejs', { data: result, my_id: req.user._id, chatrooms: result_chatrooms });
+
+    });
+
     // 채팅방 목록을 chat.ejs에 넘겨줌
-    res.render('chat.ejs', { data: result, my_id: req.user._id, chatrooms: result });
+
 
   });
 });
 
 
+
+// 메시지 저장
 app.post('/message', connect_login, function (req, res) {
+  db.collection('login').findOne({ _id: req.user._id }, function (err, result) {
+    var message_data_save = {
+      parent: ObjectId(req.body.parent),
+      content: req.body.content,
+      userid: req.user._id,
+      date: new Date(),
+      nick: result.nick
+    }
 
-  var message_data_save = {
-    parent: ObjectId(req.body.parent),
-    content: req.body.content,
-    userid: req.user._id,
-    date: new Date()
-  }
-  db.collection('message').insertOne(message_data_save).then((result) => {
-    console.log('메시지 저장 성공');
-    res.send("DB 저장 성공");
-  }).catch((err) => {
-    console.log("db 저장 실패 ", err);
+    db.collection('message').insertOne(message_data_save).then((result) => {
+      console.log('메시지 저장 성공');
+      res.send("DB 저장 성공");
+    }).catch((err) => {
+      console.log("db 저장 실패 ", err);
+    });
   });
 });
+
 
 app.get('/message/:parentid', connect_login, function (req, res) {
 
@@ -225,21 +243,6 @@ app.get('/message/:parentid', connect_login, function (req, res) {
 
 });
 
-// 채팅방 검색
-app.post('/chat', function (req, res) {
-  db.collection('chatroom').find().toArray(function (err, result) {
-    console.log(result);
-    res.render('chat.ejs', { chatrooms: result });
-  });
-  // var enter_chatroom = {
-  //   title: req.body.chatRoomNameSearch
-  // }
-  // db.collection('chatroom').insertOne(enter_chatroom, function (err, result) {
-  //   console.log(result);
-  //   //res.send('채팅방 생성 완료');
-  //   res.redirect('/chat');
-  // });
-});
 
 // 채팅방 생성
 app.post('/create_room', connect_login, function (req, res) {
@@ -260,4 +263,53 @@ app.post('/create_room', connect_login, function (req, res) {
       res.redirect('/chat');
     });
   });
+
 });
+
+
+app.get('/search', (req, res) => {
+  console.log(req.query.value);
+  // db.collection('post').find( { $text: {$search: req.query.value } } ).toArray((err, result) => {
+  //         console.log(result);
+  //         res.render('search.ejs', {posts : result});
+  //     });
+
+  var search_condition = [ // 검색조건
+    {
+      $search: {
+        index: 'search_chatrooms',
+        text: { // 검색요청 부분
+          query: req.query.value,
+          path: "title"
+        }
+      }
+    },
+    /*{
+        $sort : { // _id 정렬
+            _id : 1
+        },
+        //$limit : 10 // 10개 제한
+    }*/
+    /*{
+        $project : {제목: 1, _id: 0, score: {$meta : "searchScore"} } // 검색 결과에 필터주기
+    }*/
+  ]
+
+});
+
+
+app.post('/chatrooms_in', function (req, res) {
+
+  db.collection('login').findOne({ _id: req.user._id }, function (err, result) {
+
+    var chat_insert = {
+      member: [req.user._id],
+      memberName: [result.nick]
+    }
+
+    db.collection('chatroom').updateOne({ _id: ObjectId(req.body.chatrooms_data) }, { $push: { member: Object(req.user._id), memberName: result.nick } }, function (err, result) {
+      res.redirect('/chat');
+    });
+
+  });
+})
